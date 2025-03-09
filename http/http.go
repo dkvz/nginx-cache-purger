@@ -20,6 +20,6 @@ func NewServer(config *nginxcachepurger.Config) *Server {
 }
 
 func (s *Server) ListenAndServe(port uint) error {
-
+	http.HandleFunc("POST /purge", s.handlePurgeRequest)
 	return http.ListenAndServe(fmt.Sprintf("127.0.0.1:%v", port), nil)
 }

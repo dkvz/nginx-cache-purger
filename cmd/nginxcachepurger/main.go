@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	nginxcachepurger "github.com/dkvz/nginx-cache-purger"
+	"github.com/dkvz/nginx-cache-purger/http"
 )
 
 func main() {
@@ -13,6 +13,8 @@ func main() {
 		log.Fatal("Could not load configuration: " + err.Error())
 	}
 
-	fmt.Printf("%v\n", conf)
+	server := http.NewServer(conf)
+	log.Println("starting server...")
+	server.ListenAndServe(3000)
 
 }

@@ -24,6 +24,7 @@ func NewRequester(config *Config) *Requester {
 func makePurgeRequest(fullPurgeUrl string) {
 	// I could set a low timeout but we don't really care if
 	// it's long.
+	log.Printf("clearing: %v\n", fullPurgeUrl)
 	resp, err := http.Get(fullPurgeUrl)
 	if err != nil || resp.StatusCode > 210 {
 		// Crash on error by design:
@@ -47,7 +48,6 @@ func (r *Requester) Start() {
 			if url[len(url)-1] != '/' {
 				url = url + "/"
 			}
-			log.Printf("clearing: %v\n", url)
 			fullPurgeUrl := r.Config.PurgeBaseUrl + url
 			makePurgeRequest(fullPurgeUrl)
 			time.Sleep(time.Duration(r.Config.RequestSleepInterval) * time.Second)

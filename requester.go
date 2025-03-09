@@ -40,12 +40,15 @@ func (r *Requester) Start() {
 			if len(url) < 1 {
 				continue
 			}
-			log.Printf("clearing: %v\n", url)
 			// Check if first character is a slash, or make it a slash:
 			if url[0] != '/' {
-
+				url = "/" + url
 			}
-			fullPurgeUrl := r.Config.PurgeBaseUrl + strings.TrimSpace(url)
+			if url[len(url)-1] != '/' {
+				url = url + "/"
+			}
+			log.Printf("clearing: %v\n", url)
+			fullPurgeUrl := r.Config.PurgeBaseUrl + url
 			makePurgeRequest(fullPurgeUrl)
 			time.Sleep(time.Duration(r.Config.RequestSleepInterval) * time.Second)
 		}

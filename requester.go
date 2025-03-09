@@ -45,7 +45,8 @@ func (r *Requester) Start() {
 			if url[0] != '/' {
 				url = "/" + url
 			}
-			if url[len(url)-1] != '/' {
+			lastChar := url[len(url)-1]
+			if lastChar != '/' && lastChar != '*' {
 				url = url + "/"
 			}
 			fullPurgeUrl := r.Config.PurgeBaseUrl + url

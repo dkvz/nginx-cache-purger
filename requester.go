@@ -1,6 +1,11 @@
 package nginxcachepurger
 
-import "log"
+import (
+	"log"
+	"net/http"
+	"strings"
+	"time"
+)
 
 // TODO Provide a way for owner to close the channel
 type Requester struct {
@@ -16,12 +21,33 @@ func NewRequester(config *Config) *Requester {
 	}
 }
 
+func makePurgeRequest(fullPurgeUrl string) {
+	// I could set a low timeout but we don't really care if
+	// it's long.
+	resp, err := http.Get(fullPurgeUrl)
+	if err != nil || resp.StatusCode > 210 {
+		// Crash on error by design:
+		log.Fatalln("error making the purge request, exiting")
+	}
+}
+
 // Starts the requester:
 func (r *Requester) Start() {
 	go func() {
 		for {
 			url := <-r.reqChan
-			log.Printf("processing %v\n", url)
+			url = strings.TrimSpace(url)
+			if len(url) < 1 {
+				continue
+			}
+			log.Printf("clearing: %v\n", url)
+			// Check if first character is a slash, or make it a slash:
+			if url[0] != '/' {
+
+			}
+			fullPurgeUrl := r.Config.PurgeBaseUrl + strings.TrimSpace(url)
+			makePurgeRequest(fullPurgeUrl)
+			time.Sleep(time.Duration(r.Config.RequestSleepInterval) * time.Second)
 		}
 	}()
 }
